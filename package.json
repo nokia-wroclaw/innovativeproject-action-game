@@ -1,0 +1,27 @@
+{
+  "name": "innovativeproject-action-game",
+  "version": "1.0.0",
+  "description": "Awesome action game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nokia-wroclaw/innovativeproject-action-game.git"
+  },
+  "keywords": [
+    "action",
+    "game"
+  ],
+  "author": "Nokia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nokia-wroclaw/innovativeproject-action-game/issues"
+  },
+  "homepage": "https://github.com/nokia-wroclaw/innovativeproject-action-game#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  }
+}
