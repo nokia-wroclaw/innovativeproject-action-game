@@ -43,23 +43,56 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+var width = 640;
+var height = 480;
+var scale = 16;
+var canv, ctx;
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+        function(m,key,value) {
+            vars[key] = value;
+        });
+    return vars;
+}
+
 window.onload = function() {
-    socket.emit('new_room');
-    //socket.emit('join_room', 'test0');
-    setInterval(function() {
-        socket.emit('key_states', key_states);
-    }, 1000 / 60);
-
-    var width = 640;
-    var height = 480;
-    var scale = 16;
-
-    var canv = document.getElementById('canvas');
+    canv = document.getElementById('canvas');
 
     canv.width = width;
     canv.height = height;
 
-    var ctx = canv.getContext('2d');
+    ctx = canv.getContext('2d');
+
+    var room_id = getUrlVars()['id'];
+    if(room_id) {
+        socket.emit('join_room', room_id);
+        socket.on('join_room_info', function(data) {
+            if(data == 'failed') {
+                alert('Could not find a room with this id!');
+            } else {
+                startGame();
+            }
+        });
+    } else {
+        // TODO: Label with link and game start
+        socket.emit('new_room');
+        socket.on('new_room_info', function(data) {
+            if(!data) {
+                alert('Creating a new room failed!');
+            } else {
+                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data);
+                startGame();
+            }
+        });
+    }
+}
+
+function startGame() {
+    setInterval(function() {
+        socket.emit('key_states', key_states);
+    }, 1000 / 60);
 
     socket.on('update', function(players) {
         ctx.clearRect(0, 0, width, height);
