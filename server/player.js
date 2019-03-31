@@ -13,7 +13,7 @@ module.exports = class Player {
         }
     }
 
-    move() {
+    update() {
         if (this.key_states.up)
             this.y -= this.speed;
         if (this.key_states.down)

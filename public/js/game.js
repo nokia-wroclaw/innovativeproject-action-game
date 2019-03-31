@@ -44,7 +44,8 @@ document.addEventListener('keydown', function(event) {
 });
 
 window.onload = function() {
-    socket.emit('new_player');
+    socket.emit('new_room');
+    //socket.emit('join_room', 'test0');
     setInterval(function() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
