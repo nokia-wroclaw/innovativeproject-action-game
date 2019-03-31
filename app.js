@@ -29,10 +29,13 @@ var rooms = [];
 
 io.on('connection', function(socket) {
     socket.on('new_room', function() {
-        var room = new Room(2, "test" + rooms.length);
+        var room = new Room(2, "room" + rooms.length);
         room.join(new Player(socket.id, 300, 300));
         rooms.push(room);
         var room_id = rooms.length - 1;
+
+        // TODO: hash room_id for client
+        io.sockets.to(socket.id).emit('new_room_info', 'room' + room_id);
 
         setInterval(function() {
             rooms[room_id].players.forEach(function(player) {
@@ -44,12 +47,16 @@ io.on('connection', function(socket) {
         }, 1000 / 60);
     });
 
-    // TODO: validate data sent from user
-
     socket.on('join_room', function(data) {
-        rooms.find(room => room.code == data).join(new Player(socket.id, 300, 300));
+        if(rooms.find(room => room.code == data)){
+            rooms.find(room => room.code == data).join(new Player(socket.id, 300, 300))
+            io.sockets.to(socket.id).emit('join_room_info', 'ok');
+        } else {
+            io.sockets.to(socket.id).emit('join_room_info', 'failed');
+        }
     });
 
+    // TODO: validate data sent from userd
     socket.on('key_states', function(data) {
         rooms.forEach(function(room) {
             room.update(socket.id, data);
