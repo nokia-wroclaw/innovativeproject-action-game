@@ -45,8 +45,9 @@ document.addEventListener('keydown', function(event) {
 
 var width = 640;
 var height = 480;
-var scale = 16;
+var scale = 32;
 var canv, ctx;
+var map;
 
 function getUrlVars() {
     var vars = {};
@@ -72,17 +73,19 @@ window.onload = function() {
             if(data == 'failed') {
                 alert('Could not find a room with this id!');
             } else {
+                map = data.map;
+                alert(map);
                 startGame();
             }
         });
     } else {
-        // TODO: Label with link and game start
         socket.emit('new_room');
         socket.on('new_room_info', function(data) {
             if(!data) {
                 alert('Creating a new room failed!');
             } else {
-                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data);
+                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data.code);
+                console.log(data.map);
                 startGame();
             }
         });
