@@ -49,6 +49,9 @@ var scale = 32;
 var canv, ctx;
 var mapTown;
 
+var player1Sprite;
+var player2Sprite;
+
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
@@ -96,30 +99,25 @@ function startGame() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
 
+    var blocks = ["white", "black", "green"];
+
+    player1Sprite = new Image();
+    player2Sprite = new Image();
+
+    player1Sprite.src = "/public/res/player1.png";
+    player2Sprite.src = "/public/res/player2.png";
     socket.on('update', function(players) {
         for (var i = 0; i < mapTown.length ; i++){
             for (var j = 0 ; j < mapTown[i].length; j++) {
-                ctx.fillStyle = drawMap(mapTown[i][j]);
+                ctx.fillStyle = blocks[mapTown[i][j]];
                 ctx.fillRect(scale * j, scale * i, scale, scale);
             }
         }
         ctx.fillStyle = 'red';
         for (var id in players) {
-            ctx.fillRect(players[id].x-scale/2, players[id].y-scale/2, scale, scale);
+            ctx.drawImage(player1Sprite,players[id].x-scale/2, players[id].y-scale/2);
         }
     });
 
 
-}
-
-function drawMap(type){
-    switch (type) {
-        case 0:
-            return "white";
-        case 1:
-            return "black";
-        default:
-            Console.log("unknown type\n");
-            return "white";
-    }
 }
