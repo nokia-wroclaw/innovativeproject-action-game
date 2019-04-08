@@ -47,7 +47,7 @@ var width = 640;
 var height = 480;
 var scale = 32;
 var canv, ctx;
-var map;
+var mapTown;
 
 function getUrlVars() {
     var vars = {};
@@ -73,8 +73,7 @@ window.onload = function() {
             if(data == 'failed') {
                 alert('Could not find a room with this id!');
             } else {
-                map = data.map;
-                alert(map);
+                mapTown = data.map;
                 startGame();
             }
         });
@@ -85,7 +84,7 @@ window.onload = function() {
                 alert('Creating a new room failed!');
             } else {
                 alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data.code);
-                console.log(data.map);
+                mapTown = data.map;
                 startGame();
             }
         });
@@ -98,10 +97,29 @@ function startGame() {
     }, 1000 / 60);
 
     socket.on('update', function(players) {
-        ctx.clearRect(0, 0, width, height);
+        for (var i = 0; i < mapTown.length ; i++){
+            for (var j = 0 ; j < mapTown[i].length; j++) {
+                ctx.fillStyle = drawMap(mapTown[i][j]);
+                ctx.fillRect(scale * j, scale * i, scale, scale);
+            }
+        }
         ctx.fillStyle = 'red';
         for (var id in players) {
             ctx.fillRect(players[id].x-scale/2, players[id].y-scale/2, scale, scale);
         }
     });
+
+
+}
+
+function drawMap(type){
+    switch (type) {
+        case 0:
+            return "white";
+        case 1:
+            return "black";
+        default:
+            Console.log("unknown type\n");
+            return "white";
+    }
 }
