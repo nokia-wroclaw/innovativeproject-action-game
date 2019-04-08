@@ -83,7 +83,7 @@ window.onload = function() {
             if(!data) {
                 alert('Creating a new room failed!');
             } else {
-                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data.code);
+                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data.id);
                 mapTown = data.map;
                 startGame();
             }
