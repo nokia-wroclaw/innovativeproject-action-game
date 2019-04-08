@@ -35,8 +35,9 @@ io.on('connection', function(socket) {
         var room_id = rooms.length - 1;
 
         // TODO: hash room_id for client
-        io.sockets.to(socket.id).emit('new_room_info', 'room' + room_id);
+        io.sockets.to(socket.id).emit('new_room_info', room.info);
 
+        // TODO: terminate timeouts
         setInterval(function() {
             rooms[room_id].players.forEach(function(player) {
                 player.update();
@@ -48,15 +49,16 @@ io.on('connection', function(socket) {
     });
 
     socket.on('join_room', function(data) {
-        if(rooms.find(room => room.code == data)){
-            rooms.find(room => room.code == data).join(new Player(socket.id, 300, 300))
-            io.sockets.to(socket.id).emit('join_room_info', 'ok');
+        var room = rooms.find(room => room.code == data)
+        if(room){
+            room.join(new Player(socket.id, 300, 300))
+            io.sockets.to(socket.id).emit('join_room_info', room.info);
         } else {
             io.sockets.to(socket.id).emit('join_room_info', 'failed');
         }
     });
 
-    // TODO: validate data sent from userd
+    // TODO: validate data sent from user
     socket.on('key_states', function(data) {
         rooms.forEach(function(room) {
             room.update(socket.id, data);
