@@ -7,7 +7,7 @@ module.exports = class Player {
         this.face = 0;
 
         this.physicsObj = new engine.physicsObject(x, y);
-        this.gravityForce = new engine.vector(0, 0.3);
+        this.gravityForce = new engine.vector(0, 0.4);
         this.jumpForce = new engine.vector(0, -10);
 
         this.key_states = {
@@ -25,16 +25,18 @@ module.exports = class Player {
          // TYMCZASOWO
 
         if (this.key_states.up) {
-            if(this.physicsObj.pos.y >= 32*14)
+            if(this.physicsObj.pos.y >= 480-32-16)
                 this.physicsObj.applyForce(this.jumpForce);
         }
         if (this.key_states.left) {
             this.face = 0;
-            this.physicsObj.pos.x -= this.speed;
+            if (this.physicsObj.pos.x > 16)
+                this.physicsObj.pos.x -= this.speed;
         }
         if (this.key_states.right) {
             this.face = 1;
-            this.physicsObj.pos.x += this.speed;
+            if(this.physicsObj.pos.x  < 624)
+                this.physicsObj.pos.x += this.speed;
         }
     }
 

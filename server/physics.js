@@ -37,8 +37,8 @@ class PhysicsObject {
         this.vel.add(this.acc);
         this.acc.clear();
         this.pos.add(this.vel);
-        if(this.pos.y > 32*14){
-            this.pos.y = 32*14;
+        if(this.pos.y > 480-32-16){
+            this.pos.y = 480-32-16;
             this.vel.y = 0;
         }
     }
