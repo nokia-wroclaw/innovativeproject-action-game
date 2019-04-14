@@ -34,23 +34,24 @@ module.exports = class Mast {
 
 
 
-        update() {
+        update(isHeld) {
             //console.log(this.first_end.x+" "+this.first_end.y);
 
             //@TODO limit mast not to fall beneath player's shoulder
             this.physicsObj.applyForce(this.gravityForce);
             this.physicsObj.update();
-            this.first_end.x = this.physicsObj.pos.x;
-            this.first_end.y = this.physicsObj.pos.y;  //update mast post
-
+            this.first_end.y = this.physicsObj.pos.y;  // gravity is independent from player's movement
+            if(isHeld) {
+                this.first_end.x = this.physicsObj.pos.x;
+                       }
             if(this.angle == 0) return;
 
             if(this.angle < 0) {
-                this.angle += 0.015*(this.angle);
+                this.angle += 0.017*(this.angle);
                 this.angle = Math.max(-90,this.angle)  //pull mast towards floor
             }
             if(this.angle > 0){
-                this.angle += 0.015*(this.angle); // power of pull. The bigger the angle, the stronger is the pulling
+                this.angle += 0.017*(this.angle); // power of pull. The bigger the angle, the stronger is the pulling
                 this.angle = Math.min(90,this.angle) // pull mast towards floot
             }
            // console.log(this.angle+"\n"); //debug
