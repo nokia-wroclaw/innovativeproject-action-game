@@ -22,7 +22,9 @@ document.addEventListener('keyup', function(event) {
         case 68:
             key_states.right = false;
             break;
-        
+        case 32:
+            key_states.space = false;
+            break;
     }
 });
 
@@ -39,6 +41,9 @@ document.addEventListener('keydown', function(event) {
             break;
         case 68:
             key_states.right = true;
+            break;
+        case 32:
+            key_states.space = true;
             break;
     }
 });
