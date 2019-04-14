@@ -47,11 +47,11 @@ module.exports = class Mast {
             if(this.angle == 0) return;
 
             if(this.angle < 0) {
-                this.angle += 0.017*(this.angle);
+                this.angle += 0.033*(this.angle);
                 this.angle = Math.max(-90,this.angle)  //pull mast towards floor
             }
             if(this.angle > 0){
-                this.angle += 0.017*(this.angle); // power of pull. The bigger the angle, the stronger is the pulling
+                this.angle += 0.033*(this.angle); // power of pull. The bigger the angle, the stronger is the pulling
                 this.angle = Math.min(90,this.angle) // pull mast towards floot
             }
            // console.log(this.angle+"\n"); //debug

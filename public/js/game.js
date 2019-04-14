@@ -54,9 +54,11 @@ var scale = 32;
 var canv, ctx;
 var mapTown;
 
+var backgroundLayer;
 var player1Sprite;
 var player2Sprite;
 var mast1Sprite;
+var building_tiles;
 
 function getUrlVars() {
     var vars = {};
@@ -104,24 +106,40 @@ function startGame() {
     setInterval(function() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
-
-    var blocks = ["white", "black", "green"];
-
     player1Sprite = new Image();
+
     player2Sprite = new Image();
     mast1Sprite = new Image();
-
+    backgroundLayer = new Image();
+    building_tiles = new Image();
     player1Sprite.src = "/public/res/player1.png";
+
+    var blocks = new Array();
+
     player2Sprite.src = "/public/res/player2.png";
     mast1Sprite.src = "/public/res/mast0.png";
+    backgroundLayer.src =  "/public/res/background.png";
+    building_tiles.src = "public/res/building_tiles.png";
+    building_tiles.onload = function () {
+
+        ctx.drawImage(building_tiles,0,0);
+        //var blocks = ["absolutely nothing",, ]; // 0 for nothing, 1 for a window, 2 for a brick
+        blocks.push("absolutely nothing");
+        blocks.push(ctx.getImageData(0,0,32,32));
+        blocks.push(ctx.getImageData(31,0,32,32));
+    }
+
     socket.on('update', function(players) {
+        ctx.drawImage(backgroundLayer,0,0);
         for (var i = 0; i < mapTown.length ; i++){
             for (var j = 0 ; j < mapTown[i].length; j++) {
-                ctx.fillStyle = blocks[mapTown[i][j]];
-                ctx.fillRect(scale * j, scale * i, scale, scale);
+                if(mapTown[i][j] == 0) continue;
+               // ctx.fillStyle = blocks[mapTown[i][j]];
+                ctx.putImageData(blocks[mapTown[i][j]],j*scale,i*scale);
+                //ctx.drawImage(blocks[mapTown[i][j]],j*scale,i*scale);
             }
         }
-        ctx.fillStyle = 'red';
+        //ctx.fillStyle = 'red';
         for (var id in players) {
 
             let player = players[id];

@@ -11,7 +11,6 @@ module.exports = class Player {
         this.gravityForce = new engine.vector(0, 0.4);
         this.jumpForce = new engine.vector(0, -10);
         this.holding_mast = true;
-
         this.key_states = {
             up:    false,
             down:  false,
@@ -20,7 +19,7 @@ module.exports = class Player {
             space: false
         }
     }
-
+    //@TODO make some time limit so players cannot pick up masts instantly after their drop it. Weird exploit.
     pickUpMast(){
         if(this.holding_mast) return;
         if (this.closeEnough()) {
@@ -59,7 +58,7 @@ module.exports = class Player {
             if (this.physicsObj.pos.x > 16) {
                 this.physicsObj.pos.x -= this.speed;
                 this.mast.physicsObj.pos.x -= this.speed;
-                this.mast.angle += this.speed * (this.mast.angle + 90.0) * 0.004; //while walking left increase the angle. 0.004 is a fixed value to slow the process down
+                this.mast.angle += this.speed * ((this.mast.angle + 90.0)/4) * 0.03; //while walking left increase the angle. 0.004 is a fixed value to slow the process down
             }
         }
         if (this.key_states.right) {
@@ -67,7 +66,7 @@ module.exports = class Player {
             if(this.physicsObj.pos.x  < 624)
             {this.physicsObj.pos.x += this.speed;
                 this.mast.physicsObj.pos.x += this.speed;
-                this.mast.angle -= this.speed * (90.0 - this.mast.angle) * 0.004; //while walking right decrease the angle
+                this.mast.angle -= this.speed * ((90.0 - this.mast.angle)/4) * 0.03; //while walking right decrease the angle
             }
         }
             this.holding_mast = this.mastActive();
