@@ -9,7 +9,7 @@ var io = socketIO(server);
 
 var Player = require('./server/player.js');
 var Room = require('./server/room.js');
-
+var Mast = require('./server/Mast');
 app.set('port', 5000);
 
 app.use(express.static(__dirname + '/public'));
@@ -41,7 +41,7 @@ io.on('connection', function(socket) {
         setInterval(function() {
             rooms[room_id].players.forEach(function(player) {
                 player.update();
-            });
+               });
             rooms[room_id].players.forEach(function(player) {
                 io.sockets.to(player.id).emit('update', room.players.map(player => player.info));
             });
