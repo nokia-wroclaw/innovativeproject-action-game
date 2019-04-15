@@ -1,4 +1,4 @@
-
+var bounceEpsillon = 0.1;
 
 class Vector {
     constructor(x, y) {
@@ -23,28 +23,33 @@ class Vector {
 }
 
 class PhysicsObject {
-    constructor(x, y) {
+    constructor(x, y, reflectForce = 0) {
         this.pos = new Vector(x, y);
         this.vel = new Vector(0, 0);
         this.acc = new Vector(0, 0);
+
+        this.ref = reflectForce;
     }
 
     applyForce(force) {
         this.acc.add(force);
     }
 
+    bounce(scale) {
+        let force = this.vel.y * (-1) * scale;
+        if(Math.abs(force) > bounceEpsillon)
+            this.vel.y = this.vel.y * (-1) * scale;
+        else this.vel.y = 0;
+    }
+
     update() {
         this.vel.add(this.acc);
         this.acc.clear();
         this.pos.add(this.vel);
-        if(this.pos.y > 480-32-16){
-            this.pos.y = 480-32-16;
-            this.vel.y = 0;
-        }
     }
 }
 
 module.exports = {
-    vector: Vector,
-    physicsObject: PhysicsObject
+    Vector,
+    PhysicsObject
 };

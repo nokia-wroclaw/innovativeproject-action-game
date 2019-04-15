@@ -39,13 +39,11 @@ io.on('connection', function(socket) {
 
         // TODO: terminate timeouts
         setInterval(function() {
-            rooms[room_id].players.forEach(function(player) {
-                player.update();
-               });
+            rooms[room_id].updateLevel();
             rooms[room_id].players.forEach(function(player) {
                 io.sockets.to(player.id).emit('update', room.players.map(player => player.info));
             });
-        }, 1000 / 60);
+        }, 1000 / 120);
     });
 
     socket.on('join_room', function(data) {

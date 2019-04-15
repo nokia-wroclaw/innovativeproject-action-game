@@ -102,6 +102,8 @@ window.onload = function() {
     }
 }
 
+var players = [];
+
 function startGame() {
     setInterval(function() {
         socket.emit('key_states', key_states);
@@ -121,7 +123,6 @@ function startGame() {
     backgroundLayer.src =  "/public/res/background.png";
     building_tiles.src = "public/res/building_tiles.png";
     building_tiles.onload = function () {
-
         ctx.drawImage(building_tiles,0,0);
         //var blocks = ["absolutely nothing",, ]; // 0 for nothing, 1 for a window, 2 for a brick
         blocks.push("absolutely nothing");
@@ -129,28 +130,31 @@ function startGame() {
         blocks.push(ctx.getImageData(31,0,32,32));
     }
 
-    socket.on('update', function(players) {
+    socket.on('update', function(data) {
+        players = data;
+    });
+
+
+
+    setInterval(function() {
         ctx.drawImage(backgroundLayer,0,0);
         for (var i = 0; i < mapTown.length ; i++){
             for (var j = 0 ; j < mapTown[i].length; j++) {
                 if(mapTown[i][j] == 0) continue;
-               // ctx.fillStyle = blocks[mapTown[i][j]];
+                // ctx.fillStyle = blocks[mapTown[i][j]];
                 ctx.putImageData(blocks[mapTown[i][j]],j*scale,i*scale);
                 //ctx.drawImage(blocks[mapTown[i][j]],j*scale,i*scale);
             }
         }
         //ctx.fillStyle = 'red';
         for (var id in players) {
-
             let player = players[id];
-            ctx.drawImage(player1Sprite,player.x-scale/2, player.y-scale/2);
-            drawImageRot(mast1Sprite,player.mast.first_end.x,player.mast.first_end.y,16,32,player.mast.angle);
-             }
-
-    });
+            ctx.drawImage(player1Sprite,player.x, player.y);
+            //drawImageRot(mast1Sprite,player.mast.first_end.x,player.mast.first_end.y,16,32,player.mast.angle);
+        }
+    }, 1000/60);
 
 function drawImageRot(img,x,y,width,height,deg){
-
         //Convert degrees to radian
         var rad = deg * Math.PI / 180;
 
