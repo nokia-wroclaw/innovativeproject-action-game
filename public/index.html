@@ -6,6 +6,26 @@
         <link rel="stylesheet" type="text/css" href="css/style.css" />
     </head>
     <body>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" class="blocked animated"></canvas>
+        <div id="menu" class="info-box animated">
+            <div id="opt1" class="animated">
+                <p id="menu-title" class="info-box-title">Super giera 2000</p>
+                <div id="btn-new" class="btn-menu">
+                    <p class="btn-menu-text">New room</p>
+                </div>
+                <div id="btn-join" class="btn-menu">
+                    <p class="btn-menu-text">Join room</p>
+                </div>
+            </div>
+            <div id="opt2" class="blocked animated">
+                <div id="btn-back" class="btn-back">&#8592</div>
+                <p id="menu-option" class="info-box-title">Podaj kod pokoju</p>
+                <input id="menu-input" class="input-menu" autocomplete="off" />
+                <span class="input-border"></span>
+                <div id="btn-start" class="btn-menu">
+                    <p class="btn-menu-text">Start</p>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
