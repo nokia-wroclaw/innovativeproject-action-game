@@ -23,7 +23,7 @@ document.addEventListener('keyup', function(event) {
             key_states.right = false;
             break;
         case 32:
-            key_states.space = false;
+            socket.io.emit('test');
             break;
     }
 });
@@ -42,9 +42,6 @@ document.addEventListener('keydown', function(event) {
         case 68:
             key_states.right = true;
             break;
-        case 32:
-            key_states.space = true;
-            break;
     }
 });
 
@@ -60,46 +57,79 @@ var player2Sprite;
 var mast1Sprite;
 var building_tiles;
 
-function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
-        function(m,key,value) {
-            vars[key] = value;
+window.onload = function() {
+    let menu = document.getElementById('menu');
+    let opt1 = document.getElementById('opt1');
+    let opt2 = document.getElementById('opt2');
+    let btnNew = document.getElementById('btn-new');
+    let btnJoin = document.getElementById('btn-join');
+    let btnBack = document.getElementById('btn-back');
+    let btnStart = document.getElementById('btn-start');
+    let input = document.getElementById('menu-input');
+
+    btnNew.onclick = function() {
+        socket.emit('new_room');
+        socket.on('new_room_info', function(data) {
+            if(!data) {
+                alert('Creating a new room failed!');
+            } else {
+                //alert('Created a new room with code:' + data.id);
+                menu.classList.add('fadeOut');
+                setTimeout(function() {
+                    menu.classList.add('blocked');
+                    gameInit();
+                    mapTown = data.map;
+                    startGame();
+                }, 900);
+            }
         });
-    return vars;
+    };
+
+    btnBack.onclick = function() {
+        opt2.classList.add('fadeOut');
+        setTimeout(function() {
+            opt2.classList.add('blocked');
+            opt1.classList.remove('blocked', 'fadeOut');
+            opt1.classList.add('fadeIn');
+        }, 900);
+    };
+
+    btnJoin.onclick = function() {
+        opt1.classList.add('fadeOut');
+        setTimeout(function() {
+            opt1.classList.add('blocked');
+            opt2.classList.remove('blocked', 'fadeOut');
+            opt2.classList.add('fadeIn');
+        }, 900);
+    };
+
+    btnStart.onclick = function() {
+        socket.emit('join_room', input.value);
+        socket.on('join_room_info', function(data) {
+            if(data == 'failed') {
+                alert('Could not find a room with this id!');
+            }else if(data == 'full') {
+                alert('This room is full!');
+            } else {
+                menu.classList.add('fadeOut');
+                setTimeout(function() {
+                    menu.classList.add('blocked');
+                    gameInit();
+                    mapTown = data.map;
+                    startGame();
+                }, 900);
+            }
+        });
+    };
 }
 
-window.onload = function() {
+function gameInit() {
     canv = document.getElementById('canvas');
 
     canv.width = width;
     canv.height = height;
 
     ctx = canv.getContext('2d');
-
-    var room_id = getUrlVars()['id'];
-    if(room_id) {
-        socket.emit('join_room', room_id);
-        socket.on('join_room_info', function(data) {
-            if(data == 'failed') {
-                alert('Could not find a room with this id!');
-            } else {
-                mapTown = data.map;
-                startGame();
-            }
-        });
-    } else {
-        socket.emit('new_room');
-        socket.on('new_room_info', function(data) {
-            if(!data) {
-                alert('Creating a new room failed!');
-            } else {
-                alert('Created a new room, invitation link: ' + window.location.href + '?id=' + data.id);
-                mapTown = data.map;
-                startGame();
-            }
-        });
-    }
 }
 
 var players = [];
@@ -134,8 +164,6 @@ function startGame() {
         players = data;
     });
 
-
-
     setInterval(function() {
         ctx.drawImage(backgroundLayer,0,0);
         for (var i = 0; i < mapTown.length ; i++){
@@ -154,21 +182,24 @@ function startGame() {
         }
     }, 1000/60);
 
+    canv.classList.remove('blocked');
+    canv.classList.add('fadeIn');
+}
+
 function drawImageRot(img,x,y,width,height,deg){
-        //Convert degrees to radian
-        var rad = deg * Math.PI / 180;
+    //Convert degrees to radian
+    var rad = deg * Math.PI / 180;
 
-        //Set the origin to the center of the image
-        ctx.translate(x + width / 2, y + height / 2);
+    //Set the origin to the center of the image
+    ctx.translate(x + width / 2, y + height / 2);
 
-        //Rotate the canvas around the origin
-        ctx.rotate(rad);
+    //Rotate the canvas around the origin
+    ctx.rotate(rad);
 
-        //draw the image
-        ctx.drawImage(img,width / 2 * (-1),height / 2 * (-1),width,height);
+    //draw the image
+    ctx.drawImage(img,width / 2 * (-1),height / 2 * (-1),width,height);
 
-        //reset the canvas
-        ctx.rotate(rad * ( -1 ) );
-        ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
-    }
+    //reset the canvas
+    ctx.rotate(rad * ( -1 ) );
+    ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
 }

@@ -6,6 +6,7 @@ class Room {
     constructor(slots, code) {
         // TODO: slots validation
         this.slots = slots;
+        this.thread;
         this.code = code;
         this.players = [];
         this.map = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,7 +36,7 @@ class Room {
     }
 
     updateLevel() {
-        let room = this;
+        const room = this;
         this.players.forEach(function(player) {
             let x_l = Math.floor(player.physicsObj.pos.x / scale) % 19;
             let x_r = Math.floor((player.physicsObj.pos.x + scale - 1) / scale) % 19;
@@ -70,15 +71,20 @@ class Room {
     disconnect(player_id) {
         if(!this.findPlayer(player_id)) return;
         this.players = this.players.filter(player => player.id != player_id);
+        if(this.players.length == 0) return 1;
     }
 
     update(player_id, data) {
-        if(!this.findPlayer(player_id)) return;
+        if(!this.findPlayer(player_id) || !this.started) return;
         this.findPlayer(player_id).key_states = data;
     }
 
     findPlayer(player_id) {
         return this.players.find(player => player.id == player_id);
+    }
+
+    get started() {
+        return this.players.length == this.slots;
     }
 }
 

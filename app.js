@@ -37,20 +37,25 @@ io.on('connection', function(socket) {
         // TODO: hash room_id for client
         io.sockets.to(socket.id).emit('new_room_info', room.info);
 
-        // TODO: terminate timeouts
-        setInterval(function() {
+        let thread = setInterval(function() {
             rooms[room_id].updateLevel();
             rooms[room_id].players.forEach(function(player) {
                 io.sockets.to(player.id).emit('update', room.players.map(player => player.info));
             });
         }, 1000 / 120);
+
+        rooms[room_id].thread = thread;
     });
 
     socket.on('join_room', function(data) {
         var room = rooms.find(room => room.code == data)
         if(room){
-            room.join(new Player(socket.id, 300, 300))
-            io.sockets.to(socket.id).emit('join_room_info', room.info);
+            if(room.slots == room.players.length) {
+                io.sockets.to(socket.id).emit('join_room_info', 'full');
+            } else {
+                room.join(new Player(socket.id, 300, 300))
+                io.sockets.to(socket.id).emit('join_room_info', room.info);
+            }
         } else {
             io.sockets.to(socket.id).emit('join_room_info', 'failed');
         }
@@ -64,8 +69,16 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
+        let toRemove;
         rooms.forEach(function(room) {
-            room.disconnect(socket.id);
+            if(room.disconnect(socket.id) == 1) {
+                toRemove = room.code;
+                clearInterval(room.thread);
+            }
         });
+        if(toRemove) {
+            rooms = rooms.filter(room => room.code != toRemove);
+            console.log("Room terminated (" + toRemove + ")");
+        }
     });
 });
