@@ -8,6 +8,7 @@ class Room {
         this.slots = slots;
         this.thread;
         this.code = code;
+        this.started = false;
         this.players = [];
         this.map = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -81,10 +82,6 @@ class Room {
 
     findPlayer(player_id) {
         return this.players.find(player => player.id == player_id);
-    }
-
-    get started() {
-        return this.players.length == this.slots;
     }
 }
 
