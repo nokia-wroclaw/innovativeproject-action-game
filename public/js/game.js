@@ -66,23 +66,10 @@ window.onload = function() {
     let btnBack = document.getElementById('btn-back');
     let btnStart = document.getElementById('btn-start');
     let input = document.getElementById('menu-input');
+    let popup = document.getElementById('popup');
 
     btnNew.onclick = function() {
         socket.emit('new_room');
-        socket.on('new_room_info', function(data) {
-            if(!data) {
-                alert('Creating a new room failed!');
-            } else {
-                //alert('Created a new room with code:' + data.id);
-                menu.classList.add('fadeOut');
-                setTimeout(function() {
-                    menu.classList.add('blocked');
-                    gameInit();
-                    mapTown = data.map;
-                    startGame();
-                }, 900);
-            }
-        });
     };
 
     btnBack.onclick = function() {
@@ -105,22 +92,49 @@ window.onload = function() {
 
     btnStart.onclick = function() {
         socket.emit('join_room', input.value);
-        socket.on('join_room_info', function(data) {
-            if(data == 'failed') {
-                alert('Could not find a room with this id!');
-            }else if(data == 'full') {
-                alert('This room is full!');
-            } else {
-                menu.classList.add('fadeOut');
-                setTimeout(function() {
-                    menu.classList.add('blocked');
-                    gameInit();
-                    mapTown = data.map;
-                    startGame();
-                }, 900);
-            }
-        });
     };
+
+    socket.on('started', function() {
+        popup.classList.add('fadeOut');
+        setTimeout(function() {
+            popup.classList.add('blocked');
+        }, 900);
+    });
+
+    socket.on('join_room_info', function(data) {
+        if(data == 'failed') {
+            alert('Could not find a room with this id!');
+        }else if(data == 'full') {
+            alert('This room is full!');
+        } else {
+            menu.classList.add('fadeOut');
+            setTimeout(function() {
+                menu.classList.add('blocked');
+                gameInit();
+                mapTown = data.map;
+                startGame();
+            }, 900);
+        }
+    });
+
+    socket.on('new_room_info', function(data) {
+        if(!data) {
+            alert('Creating a new room failed!');
+        } else {
+            menu.classList.add('fadeOut');
+            setTimeout(function() {
+                menu.classList.add('blocked');
+                gameInit();
+                mapTown = data.map;
+
+                document.getElementById('code').innerText = "Code: " + data.id;
+                popup.classList.remove('blocked', 'fadeOut');
+                popup.classList.add('fadeIn');
+
+                startGame();
+            }, 900);
+        }
+    });
 }
 
 function gameInit() {
@@ -134,10 +148,14 @@ function gameInit() {
 
 var players = [];
 
+// TODO: player animations, and gfx change
+
 function startGame() {
     setInterval(function() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
+
+    // This needs hard refactor xdddd
     player1Sprite = new Image();
 
     player2Sprite = new Image();

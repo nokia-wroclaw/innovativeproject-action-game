@@ -55,6 +55,12 @@ io.on('connection', function(socket) {
             } else {
                 room.join(new Player(socket.id, 300, 300))
                 io.sockets.to(socket.id).emit('join_room_info', room.info);
+                if(room.slots == room.players.length) {
+                    room.started = true;
+                    room.players.forEach(function(player) {
+                        io.sockets.to(player.id).emit('started');
+                    });
+                }
             }
         } else {
             io.sockets.to(socket.id).emit('join_room_info', 'failed');
@@ -68,6 +74,7 @@ io.on('connection', function(socket) {
         });
     });
 
+    // TODO: rooms bug somehow after removal :(
     socket.on('disconnect', function() {
         let toRemove;
         rooms.forEach(function(room) {

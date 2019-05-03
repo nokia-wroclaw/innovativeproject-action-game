@@ -79,6 +79,8 @@ class Player {
         return {
             x: this.physicsObj.pos.x,
             y: this.physicsObj.pos.y,
+            moving: this.key_states.left || this.key_states.right,
+            face: this.face,
             air: this.inAir,
             mast: this.mast
         };
