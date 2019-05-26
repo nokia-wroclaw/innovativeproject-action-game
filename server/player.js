@@ -31,7 +31,6 @@ class Player {
         }
     }
     closeEnough(){
-
         return ((Math.abs(this.physicsObj.pos.x - this.mast.first_end.x) < 32)
                 &&
                (Math.abs(this.physicsObj.pos.y - this.mast.first_end.y) < 32));
@@ -79,9 +78,8 @@ class Player {
         return {
             x: this.physicsObj.pos.x,
             y: this.physicsObj.pos.y,
-            moving: this.key_states.left || this.key_states.right,
+            moving: (this.key_states.left ^ this.key_states.right),
             face: this.face,
-            air: this.inAir,
             mast: this.mast
         };
     }

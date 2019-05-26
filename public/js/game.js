@@ -52,10 +52,14 @@ var canv, ctx;
 var mapTown;
 
 var backgroundLayer;
-var player1Sprite;
-var player2Sprite;
-var mast1Sprite;
-var building_tiles;
+var playerSprite;
+var dishSprite;
+var buildingTiles;
+
+var players = [];
+var dish;
+var frame = 0;
+var animation = 0;
 
 window.onload = function() {
     let menu = document.getElementById('menu');
@@ -146,78 +150,84 @@ function gameInit() {
     ctx = canv.getContext('2d');
 }
 
-var players = [];
-
-// TODO: player animations, and gfx change
-
 function startGame() {
     setInterval(function() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
 
-    // This needs hard refactor xdddd
-    player1Sprite = new Image();
-
-    player2Sprite = new Image();
-    mast1Sprite = new Image();
-    backgroundLayer = new Image();
-    building_tiles = new Image();
-    player1Sprite.src = "/public/res/player1.png";
-
     var blocks = new Array();
 
-    player2Sprite.src = "/public/res/player2.png";
-    mast1Sprite.src = "/public/res/mast0.png";
+    backgroundLayer = new Image();
     backgroundLayer.src =  "/public/res/background.png";
-    building_tiles.src = "public/res/building_tiles.png";
-    building_tiles.onload = function () {
-        ctx.drawImage(building_tiles,0,0);
+    
+    buildingTiles = new Image();
+    buildingTiles.src = "public/res/building_tiles.png";
+
+    buildingTiles.onload = function () {
+        ctx.drawImage(buildingTiles,0,0);
         //var blocks = ["absolutely nothing",, ]; // 0 for nothing, 1 for a window, 2 for a brick
         blocks.push("absolutely nothing");
         blocks.push(ctx.getImageData(0,0,32,32));
-        blocks.push(ctx.getImageData(31,0,32,32));
+        blocks.push(ctx.getImageData(32,0,32,32));
     }
 
     socket.on('update', function(data) {
-        players = data;
+        players = data.players;
+        dish = new Signal(data.dish.x, data.dish.y, data.dish.angle, data.dish.offset, mapTown, scale);
     });
 
+    playerSprite = new Image();
+    playerSprite.src = '/public/res/player.png';
+
+    dishSprite = new Image();
+    dishSprite.src = '/public/res/dish.png';
+
     setInterval(function() {
-        ctx.drawImage(backgroundLayer,0,0);
+        frame++;
+        frame %= 32;
+        animation = Math.floor(frame/4);
+
+        let me = players[0];
+        const camCap = canv.height*0.56; 
+        const edge = mapTown.length*scale-canv.height;
+        let yOffset =  (edge + camCap < me.y) ? edge : me.y - camCap;
+
+        //TODO: make backgroundLayer move with camera, but slower
+        ctx.drawImage(backgroundLayer,0, 0);
         for (var i = 0; i < mapTown.length ; i++){
             for (var j = 0 ; j < mapTown[i].length; j++) {
                 if(mapTown[i][j] == 0) continue;
-                // ctx.fillStyle = blocks[mapTown[i][j]];
-                ctx.putImageData(blocks[mapTown[i][j]],j*scale,i*scale);
-                //ctx.drawImage(blocks[mapTown[i][j]],j*scale,i*scale);
+                ctx.putImageData(blocks[mapTown[i][j]], j * scale, (i * scale) - yOffset);
             }
         }
-        //ctx.fillStyle = 'red';
+
+        // SIGNAL DISH
+        ctx.drawImage(dishSprite, dish.x - 5, dish.y - yOffset - 29);
+        ctx.strokeStyle = "#AAAA3344";
+
+        dish.rays.forEach(ray => {
+            ctx.beginPath();
+            ctx.moveTo(ray.x1, ray.y1 - yOffset);
+            ctx.lineTo(ray.x2, ray.y2 - yOffset);
+            ctx.stroke();
+        });
+        // -----------
+
         for (var id in players) {
             let player = players[id];
-            ctx.drawImage(player1Sprite,player.x, player.y);
-            //drawImageRot(mast1Sprite,player.mast.first_end.x,player.mast.first_end.y,16,32,player.mast.angle);
+            ctx.drawImage(
+                playerSprite,
+                64 * (player.moving * animation),
+                64 * (!player.face) * 2,
+                64,
+                64,
+                player.x - 16,
+                player.y - 29 - yOffset,
+                64,
+                64);
         }
     }, 1000/60);
 
     canv.classList.remove('blocked');
     canv.classList.add('fadeIn');
-}
-
-function drawImageRot(img,x,y,width,height,deg){
-    //Convert degrees to radian
-    var rad = deg * Math.PI / 180;
-
-    //Set the origin to the center of the image
-    ctx.translate(x + width / 2, y + height / 2);
-
-    //Rotate the canvas around the origin
-    ctx.rotate(rad);
-
-    //draw the image
-    ctx.drawImage(img,width / 2 * (-1),height / 2 * (-1),width,height);
-
-    //reset the canvas
-    ctx.rotate(rad * ( -1 ) );
-    ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
 }

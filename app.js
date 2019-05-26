@@ -29,7 +29,7 @@ var rooms = [];
 
 io.on('connection', function(socket) {
     socket.on('new_room', function() {
-        var room = new Room(2, "room" + rooms.length);
+        var room = new Room(2, "x3W1oc" + rooms.length);
         room.join(new Player(socket.id, 300, 300));
         rooms.push(room);
         var room_id = rooms.length - 1;
@@ -40,7 +40,10 @@ io.on('connection', function(socket) {
         let thread = setInterval(function() {
             rooms[room_id].updateLevel();
             rooms[room_id].players.forEach(function(player) {
-                io.sockets.to(player.id).emit('update', room.players.map(player => player.info));
+                let info = room.players.filter(p => p.id != player.id).map(p => p.info);
+                info.unshift(player.info);
+                info = { players: info, dish: rooms[room_id].dish };
+                io.sockets.to(player.id).emit('update', info);
             });
         }, 1000 / 120);
 
