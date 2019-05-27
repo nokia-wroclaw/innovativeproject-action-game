@@ -5,7 +5,8 @@ var key_states = {
     up:    false,
     down:  false,
     left:  false,
-    right: false
+    right: false,
+    space: false
 }
 
 document.addEventListener('keyup', function(event) {
@@ -23,7 +24,7 @@ document.addEventListener('keyup', function(event) {
             key_states.right = false;
             break;
         case 32:
-            socket.io.emit('test');
+            key_states.space = false;
             break;
     }
 });
@@ -41,6 +42,9 @@ document.addEventListener('keydown', function(event) {
             break;
         case 68:
             key_states.right = true;
+            break;
+        case 32:
+            key_states.space = true;
             break;
     }
 });

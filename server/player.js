@@ -6,10 +6,11 @@ class Player {
         this.id = id;
         this.speed = speed;
         this.face = 0;
-
+        this.useBat = false;
         this.mast = new Mast(id,x,y);
         this.holding_mast = true;
         this.inAir = true;
+        this.cooldown = false;
 
         this.physicsObj = new engine.PhysicsObject(x, y);
         this.jumpForce = new engine.Vector(0, -5);
@@ -30,6 +31,11 @@ class Player {
             this.mast.angle = 0.0;
         }
     }
+
+    resetBat() {
+        this.useBat = false;
+    }
+
     closeEnough(){
         return ((Math.abs(this.physicsObj.pos.x - this.mast.first_end.x) < 32)
                 &&
@@ -39,12 +45,16 @@ class Player {
         return this.mast.angle > -87 && this.mast.angle < 87; // -90 and 90 means mast is parallel to the ground level
     }
 
+
+
     update() {
         this.physicsObj.update();
          // TYMCZASOWO
 
-        if(this.key_states.space){
-            this.pickUpMast(); //checks for mast update and picks it up if possible
+        if(this.key_states.space && !this.cooldown){
+            //this.pickUpMast(); //checks for mast update and picks it up if possible
+            this.cooldown = true;
+            this.useBat = true;
         }
         if (this.key_states.up) {
             if(!this.inAir) {
@@ -80,7 +90,8 @@ class Player {
             y: this.physicsObj.pos.y,
             moving: (this.key_states.left ^ this.key_states.right),
             face: this.face,
-            mast: this.mast
+            mast: this.mast,
+            useBat: this.useBat
         };
     }
 }
