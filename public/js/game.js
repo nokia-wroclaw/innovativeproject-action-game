@@ -116,6 +116,7 @@ window.onload = function() {
                 menu.classList.add('blocked');
                 gameInit();
                 mapTown = data.map;
+                dish = new Signal(0,0,0,0, mapTown, scale);
                 startGame();
             }, 900);
         }
@@ -130,6 +131,7 @@ window.onload = function() {
                 menu.classList.add('blocked');
                 gameInit();
                 mapTown = data.map;
+                dish = new Signal(0,0,0,0, mapTown, scale);
 
                 document.getElementById('code').innerText = "Code: " + data.id;
                 popup.classList.remove('blocked', 'fadeOut');
@@ -173,7 +175,7 @@ function startGame() {
 
     socket.on('update', function(data) {
         players = data.players;
-        dish = new Signal(data.dish.x, data.dish.y, data.dish.angle, data.dish.offset, mapTown, scale);
+        dish.set(data.dish.x, data.dish.y, data.dish.angle, data.dish.offset);
     });
 
     playerSprite = new Image();
@@ -183,6 +185,7 @@ function startGame() {
     dishSprite.src = '/public/res/dish.png';
 
     setInterval(function() {
+        dish.update();
         frame++;
         frame %= 32;
         animation = Math.floor(frame/4);
