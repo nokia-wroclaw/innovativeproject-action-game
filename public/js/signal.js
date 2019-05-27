@@ -24,6 +24,13 @@ class Signal {
         this.update();
     }
 
+    set(x, y, angle, offset) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+        this.offset = offset;
+    }
+
     update() {
         this.rays.length = 0;
         for(let i = 0; i < this.angle * 2; i++) {

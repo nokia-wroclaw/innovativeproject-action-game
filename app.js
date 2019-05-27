@@ -26,28 +26,29 @@ server.listen(5000, function() {
 });
 
 var rooms = [];
+var currID = 0;
 
 io.on('connection', function(socket) {
     socket.on('new_room', function() {
-        var room = new Room(2, "x3W1oc" + rooms.length);
+        var room = new Room(2, "x3W1oc" + currID);
+        currID++;
         room.join(new Player(socket.id, 300, 300));
         rooms.push(room);
-        var room_id = rooms.length - 1;
 
         // TODO: hash room_id for client
         io.sockets.to(socket.id).emit('new_room_info', room.info);
 
         let thread = setInterval(function() {
-            rooms[room_id].updateLevel();
-            rooms[room_id].players.forEach(function(player) {
+            room.updateLevel();
+            room.players.forEach(function(player) {
                 let info = room.players.filter(p => p.id != player.id).map(p => p.info);
                 info.unshift(player.info);
-                info = { players: info, dish: rooms[room_id].dish };
+                info = { players: info, dish: room.dish };
                 io.sockets.to(player.id).emit('update', info);
             });
         }, 1000 / 120);
 
-        rooms[room_id].thread = thread;
+        room.thread = thread;
     });
 
     socket.on('join_room', function(data) {
