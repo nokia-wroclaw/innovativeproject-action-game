@@ -275,13 +275,22 @@ class Room {
         });
     }
 
+
+    // player.face = 0 for left and 1 for right
     hitPlayer(p1){
         this.players.forEach( p2 => {
            if(p1.id != p2.id){
+               if(Math.abs(p1.physicsObj.pos.y - p2.physicsObj.pos.y) > p2.height / 2) return;
                const force = p1.physicsObj.pos.x - p2.physicsObj.pos.x;
+
+               const p1_sign = Math.sign(2*p1.face - 1);
+               //const p2_sign = Math.sign(2*p2.face - 1);
+
+               if(p1_sign == Math.sign(force)) return;
+
                console.log(force);
-               if (Math.abs(force) > 100) return;
-               p2.physicsObj.applyForce(new engine.Vector(-force * 0.5, - 2.5));
+               if (Math.abs(force) > 40) return;
+               p2.physicsObj.applyForce(new engine.Vector(-force * 0.4, -Math.abs(force) * 0.4));
 
            }
         });

@@ -46,7 +46,7 @@ class PhysicsObject {
         this.vel.add(this.acc);
         this.acc.clear();
         this.pos.add(this.vel);
-        this.vel.x *= (Math.abs(this.vel.x) < 0.01) ? 0 : 0.9;
+        this.vel.x *= (Math.abs(this.vel.x) < 0.5) ? 0 : 0.97;
     }
 }
 
