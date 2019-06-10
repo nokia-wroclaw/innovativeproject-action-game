@@ -39,13 +39,30 @@ io.on('connection', function(socket) {
         io.sockets.to(socket.id).emit('new_room_info', room.info);
 
         let thread = setInterval(function() {
+            let end = false;
             room.updateLevel();
             room.players.forEach(function(player) {
+                if(player.progress >= 100) {
+                    end = true;
+                }
                 let info = room.players.filter(p => p.id != player.id).map(p => p.info);
                 info.unshift(player.info);
                 info = { players: info, dish: room.dish };
                 io.sockets.to(player.id).emit('update', info);
             });
+
+            if(end) {
+                room.players.forEach(function(player) {
+                    if(player.progress >= 100) {
+                        io.sockets.to(player.id).emit('win');
+                    }else {
+                        io.sockets.to(player.id).emit('lose');
+                    }
+                });
+                rooms = rooms.filter(finished => finished.code != room.code);
+                console.log("Room ended");
+                clearInterval(this);
+            }
         }, 1000 / 120);
 
         room.thread = thread;
@@ -78,7 +95,6 @@ io.on('connection', function(socket) {
         });
     });
 
-    // TODO: rooms bug somehow after removal :(
     socket.on('disconnect', function() {
         let toRemove;
         rooms.forEach(function(room) {

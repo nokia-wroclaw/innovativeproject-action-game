@@ -13,41 +13,12 @@ function rnd(beg, end){
 class Room {
     constructor(slots, code) {
         // TODO: slots validation
+        this.downloadSpeed = 0.05;
         this.slots = slots;
         this.thread;
         this.code = code;
         this.started = false;
         this.players = [];
-        this.map = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]];
         this.map = this.generate_map(
             100,
             20,
@@ -61,10 +32,10 @@ class Room {
 
     rand_block(){
 
-        var seed    = rnd(1, 100);
-        var chances = [0, 300, 30, 30, 10, 0, 0, 0, 0, 0];
+        let seed    = rnd(1, 100);
+        let chances = [0, 300, 30, 30, 10, 0, 0, 0, 0, 0];
 
-        for (var i = 1; i < chances.length; i ++){
+        for (let i = 1; i < chances.length; i ++){
             chances[i] += chances[i - 1];
             if (chances[i] >= seed)
                 return i;
@@ -73,20 +44,20 @@ class Room {
 
     draw_path(A,  total_height, total_width, px, py){
 
-        for (var i = 0; i < total_width; i ++)
+        for (let i = 0; i < total_width; i ++)
             A[0][i] = 1;
-        var I = [];
-        var cur = [0, rnd(0, total_width - 1)];
-        var prev = cur;
-        var maks = [0, 0];
+        let I = [];
+        let cur = [0, rnd(0, total_width - 1)];
+        let prev = cur;
+        let maks = [0, 0];
         while (cur[0] < total_height - 2){
 
-            var vec   = [2, 0, 0, 2, -2, 0, 0, -2];
-            var neibs = [];
+            let vec   = [2, 0, 0, 2, -2, 0, 0, -2];
+            let neibs = [];
 
-            for (var i = 0; i < 8; i += 2){
-                var x = vec[i + 0] + cur[0];
-                var y = vec[i + 1] + cur[1];
+            for (let i = 0; i < 8; i += 2){
+                let x = vec[i + 0] + cur[0];
+                let y = vec[i + 1] + cur[1];
 
                 if (x >= total_height  || x < 0)
                     continue;
@@ -98,11 +69,11 @@ class Room {
                     continue;
 
                 //  if (x > 0)
-                for (var j = 0; j < (cur[0] == x || cur[1] < y) + 1; j ++)
+                for (let j = 0; j < (cur[0] == x || cur[1] < y) + 1; j ++)
                     neibs.push([x, y]);
 
             }
-            var cand ;
+            let cand ;
             if (neibs.length == 0){
                 cur = maks;
                 cand = [maks[0] + 2, maks[1]];
@@ -117,11 +88,11 @@ class Room {
                 prev = cur;
             }
         }
-        for (var i = 0; i < total_height; i ++)
-            for (var j = 0; j < total_width; j ++)
+        for (let i = 0; i < total_height; i ++)
+            for (let j = 0; j < total_width; j ++)
                 A[i][j] = 0;
 
-        for (var i = 0; i < I.length; i ++)
+        for (let i = 0; i < I.length; i ++)
             A[I[i][0]][I[i][1]] = 101;
 
 
@@ -129,8 +100,8 @@ class Room {
     }
 
     is_wall(z){
-        var walls = [0, 6, 7, 8];
-        for (var i = 0; i < walls.length; i ++)
+        let walls = [0, 6, 7, 8];
+        for (let i = 0; i < walls.length; i ++)
             if (walls[i] == z)
                 return true;
         return false;
@@ -138,40 +109,40 @@ class Room {
 
     only_ones(A){
 
-        for (var i = 0; i < A.length; i ++)
-            for (var j = 0; j < A[i].length; j ++)
+        for (let i = 0; i < A.length; i ++)
+            for (let j = 0; j < A[i].length; j ++)
                 A[i][j] = (A[i][j] == 1 ? 1 : 0);
         return A;
     }
 
     generate_map(total_height, total_width, px, py, size_of_platform){
-        var matrix = [];
-        for (var i = 0;  i < total_height; i ++){
-            var cand = [];
-            for (var j = 0; j < total_width; j ++)
+        let matrix = [];
+        for (let i = 0;  i < total_height; i ++){
+            let cand = [];
+            for (let j = 0; j < total_width; j ++)
                 cand.push(0);
             matrix.push(cand);
         }
         matrix = this.draw_path(matrix, total_height, total_width, px, py);
 
-        for (var i = 0; i < total_height; i ++)
-            for (var j = 0; j < total_width; j ++)
+        for (let i = 0; i < total_height; i ++)
+            for (let j = 0; j < total_width; j ++)
                 if (matrix[i][j] == 101){
-                    var for_left  = rnd(1, size_of_platform / 2);
-                    var for_right = rnd(1, size_of_platform / 2);
-                    var T = this.rand_block();
-                    for (var o = j - for_left; o <= j + for_right; o ++){
+                    let for_left  = rnd(1, size_of_platform / 2);
+                    let for_right = rnd(1, size_of_platform / 2);
+                    let T = this.rand_block();
+                    for (let o = j - for_left; o <= j + for_right; o ++){
                         if (o < 0 || o >= total_width) continue;
                         matrix[i][o] = T;
                     }
                 }
 
-        for (var i = 0; i < total_width; i ++)
+        for (let i = 0; i < total_width; i ++)
             matrix[0][i] = 1;
         matrix.reverse();
-        for (var j = 0; j < total_width; j ++){
-            var what = 0; // 0 - nothing, 6 - left, 7 - right, 8 - middle
-            for (var i = 0; i < total_height; i ++){
+        for (let j = 0; j < total_width; j ++){
+            let what = 0; // 0 - nothing, 6 - left, 7 - right, 8 - middle
+            for (let i = 0; i < total_height; i ++){
                 if (matrix[i][j] == 1){
                     if (j == 0 || this.is_wall(matrix[i][j - 1]))
                         what = 6;
@@ -185,7 +156,7 @@ class Room {
 
 
         matrix = this.only_ones(matrix);
-        for (var i = 0; i < total_height; i ++){
+        for (let i = 0; i < total_height; i ++){
             console.log(matrix[i]);
         }
         return matrix;
@@ -258,16 +229,18 @@ class Room {
                 player.inAir = false;
             }
 
+            if(player.phone && player.progress < 100) {
+                if(room.dish.download(player.x-16, player.y-29, player.width, player.height)) {
+                    player.progress += room.downloadSpeed;
+                }
+            }
+
             if(player.useBat){
-                //console.log("before hit " + player.useBat);
                 player.resetBat();
-                //console.log(player.id +" hits");
                 setTimeout(function() {
                     player.cooldown = false;
                 }, 1000);
                 room.hitPlayer(player);
-                console.log("after hit "+ player.useBat);
-
             }
 
             room.dish.move();
@@ -279,20 +252,26 @@ class Room {
     // player.face = 0 for left and 1 for right
     hitPlayer(p1){
         this.players.forEach( p2 => {
-           if(p1.id != p2.id){
-               if(Math.abs(p1.physicsObj.pos.y - p2.physicsObj.pos.y) > p2.height / 2) return;
-               const force = p1.physicsObj.pos.x - p2.physicsObj.pos.x;
+            if(p1.id != p2.id){
+                if(Math.abs(p1.physicsObj.pos.y - p2.physicsObj.pos.y) > p2.height / 2) return;
+                const force = p1.physicsObj.pos.x - p2.physicsObj.pos.x;
 
-               const p1_sign = Math.sign(2*p1.face - 1);
-               //const p2_sign = Math.sign(2*p2.face - 1);
+                const p1_sign = Math.sign(2*p1.face - 1);
+                //const p2_sign = Math.sign(2*p2.face - 1);
 
-               if(p1_sign == Math.sign(force)) return;
+                if(p1_sign == Math.sign(force)) return;
 
-               console.log(force);
-               if (Math.abs(force) > 40) return;
-               p2.physicsObj.applyForce(new engine.Vector(-force * 0.4, -Math.abs(force) * 0.4));
+                if (Math.abs(force) > 40) return;
+                p2.physicsObj.applyForce(new engine.Vector(-force * 0.4, -Math.abs(force) * 0.4));
 
-           }
+                if(p2.phone) {
+                    p2.resetPhone();
+                    p2.cooldown = true;
+                    setTimeout(function() {
+                        p2.cooldown = false;
+                    }, 1000);
+                }
+            }
         });
     }
 

@@ -6,7 +6,8 @@ var key_states = {
     down:  false,
     left:  false,
     right: false,
-    space: false
+    space: false,
+    shift: false
 }
 
 document.addEventListener('keyup', function(event) {
@@ -25,6 +26,9 @@ document.addEventListener('keyup', function(event) {
             break;
         case 32:
             key_states.space = false;
+            break;
+        case 16:
+            key_states.shift = false;
             break;
     }
 });
@@ -46,6 +50,9 @@ document.addEventListener('keydown', function(event) {
         case 32:
             key_states.space = true;
             break;
+        case 16:
+            key_states.shift = true;
+            break;
     }
 });
 
@@ -58,12 +65,15 @@ var mapTown;
 var backgroundLayer;
 var playerSprite;
 var dishSprite;
+var phoneSprite;
 var buildingTiles;
 
 var players = [];
 var dish;
 var frame = 0;
 var animation = 0;
+
+var downloadProgress = new ProgressBar(0, 100, 50, 5);
 
 window.onload = function() {
     let menu = document.getElementById('menu');
@@ -145,6 +155,16 @@ window.onload = function() {
             }, 900);
         }
     });
+
+    socket.on('win', function() {
+        alert("You win!");
+        location.reload();
+    });
+
+    socket.on('lose', function() {
+        alert("You lose!");
+        location.reload();
+    });
 }
 
 function gameInit() {
@@ -188,6 +208,9 @@ function startGame() {
     dishSprite = new Image();
     dishSprite.src = '/public/res/dish.png';
 
+    phoneSprite = new Image();
+    phoneSprite.src = '/public/res/phone.png';
+
     setInterval(function() {
         dish.update();
         frame++;
@@ -201,8 +224,8 @@ function startGame() {
 
         //TODO: make backgroundLayer move with camera, but slower
         ctx.drawImage(backgroundLayer,0, 0);
-        for (var i = 0; i < mapTown.length ; i++){
-            for (var j = 0 ; j < mapTown[i].length; j++) {
+        for (let i = 0; i < mapTown.length ; i++){
+            for (let j = 0 ; j < mapTown[i].length; j++) {
                 if(mapTown[i][j] == 0) continue;
                 ctx.putImageData(blocks[mapTown[i][j]], j * scale, (i * scale) - yOffset);
             }
@@ -220,7 +243,7 @@ function startGame() {
         });
         // -----------
 
-        for (var id in players) {
+        for (let id in players) {
             let player = players[id];
             ctx.drawImage(
                 playerSprite,
@@ -232,6 +255,16 @@ function startGame() {
                 player.y - 29 - yOffset,
                 64,
                 64);
+            if(player.phone) {
+                ctx.drawImage(phoneSprite, player.x + (player.face ? 21 : - 5), player.y - 16 - yOffset);
+                downloadProgress.setValue(player.progress);
+                downloadProgress.draw(ctx, player.x - 8, player.y - 35 - yOffset, "#44FF44");
+            }
+        }
+
+        if(players[0].cooldown) {
+            ctx.fillStyle = "#4444FF";
+            ctx.fillRect(15, 15, 15, 15);
         }
     }, 1000/60);
 
