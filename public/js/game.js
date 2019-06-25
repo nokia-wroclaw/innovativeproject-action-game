@@ -59,6 +59,7 @@ document.addEventListener('keydown', function(event) {
 var width = 640;
 var height = 480;
 var scale = 32;
+var code = "";
 var canv, ctx;
 var mapTown;
 
@@ -83,8 +84,13 @@ window.onload = function() {
     let btnJoin = document.getElementById('btn-join');
     let btnBack = document.getElementById('btn-back');
     let btnStart = document.getElementById('btn-start');
+    let btnCopy = document.getElementById('btn-copy');
     let input = document.getElementById('menu-input');
     let popup = document.getElementById('popup');
+
+    btnCopy.onclick = function() {
+        copyToClipboard(code);
+    };
 
     btnNew.onclick = function() {
         socket.emit('new_room');
@@ -146,7 +152,7 @@ window.onload = function() {
                 gameInit();
                 mapTown = data.map;
                 dish = new Signal(0,0,0,0, mapTown, scale);
-
+                code = data.id;
                 document.getElementById('code').innerText = "Code: " + data.id;
                 popup.classList.remove('blocked', 'fadeOut');
                 popup.classList.add('fadeIn');

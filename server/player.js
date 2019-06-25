@@ -1,5 +1,4 @@
 var engine = require('./physics.js');
-var Mast = require('./mast.js');
 
 class Player {
     constructor(id, x, y, speed = 3.0) {
@@ -23,7 +22,7 @@ class Player {
             left:  false,
             right: false,
             space: false,
-            shift:  false
+            shift: false
         }
     }
 
@@ -33,12 +32,6 @@ class Player {
 
     resetPhone() {
         this.phone = false;
-    }
-
-    closeEnough(){
-        return ((Math.abs(this.physicsObj.pos.x - this.mast.first_end.x) < 32)
-                &&
-               (Math.abs(this.physicsObj.pos.y - this.mast.first_end.y) < 32));
     }
 
     update() {
