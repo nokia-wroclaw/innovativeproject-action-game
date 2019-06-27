@@ -9,7 +9,7 @@ class Dish {
         this.map = map;
         this.dir = 0.1;
 
-        this.convertMap();
+        //this.convertMap();
     }
 
     // 85 <-> 120 degrees

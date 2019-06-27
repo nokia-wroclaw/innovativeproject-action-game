@@ -77,7 +77,7 @@ class Signal {
         this.map = [];
         for (var y = 0; y < map.length ; y++){
             for (var x = 0 ; x < map[y].length; x++) {
-                if(map[y][x] == 0) continue;
+                if(map[y][x] != 1) continue;
                 this.map.push({ x1: x * scale, y1: y * scale, x2: (x + 1) * scale, y2: y * scale });
                 this.map.push({ x1: x * scale, y1: (y + 1) * scale, x2: (x + 1) * scale, y2: (y + 1) * scale });
                 this.map.push({ x1: x * scale, y1: y * scale, x2: x * scale, y2: (y + 1) * scale });

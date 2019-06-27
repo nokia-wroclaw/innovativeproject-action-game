@@ -68,11 +68,19 @@ var playerSprite;
 var dishSprite;
 var phoneSprite;
 var buildingTiles;
+var buildingTilesLeft;
+var buildingTilesRight;
+var platformTile;
+var leftPlatformTile;
+var rightPlatformTile;
 
 var players = [];
 var dish;
 var frame = 0;
 var animation = 0;
+var assets = 0;
+
+var blocks = new Array();
 
 var downloadProgress = new ProgressBar(0, 100, 50, 5);
 
@@ -182,26 +190,66 @@ function gameInit() {
     ctx = canv.getContext('2d');
 }
 
+function assetsInc() {
+    console.log("XD");
+    assets++;
+    if(assets >= 6) {
+        // 0 -> null
+        // 1 -> platforma
+        // 2, 3 -> lewa i prawa platforma
+        // 4 - 9 -> lewa sciana
+        // 10 - 15 -> prawa sciana
+        // 16 - 21 -> sciany
+        blocks.push("absolutely nothing");
+        //init building tiles
+        loadBlock(platformTile);
+        loadBlock(leftPlatformTile);
+        loadBlock(rightPlatformTile);
+        loadBlock(buildingTilesLeft);
+        loadBlock(buildingTilesRight);
+        loadBlock(buildingTiles);
+        console.log("Loaded");
+    }
+}
+
+function loadBlock(img) {
+    ctx.drawImage(img, 0, 0);
+    for(let i = 0 ; i < img.width ; i += 32){
+        for(let j = 0 ; j < img.height; j += 32 ){
+            blocks.push(ctx.getImageData(j,i,32,32));
+        }
+    }
+}
+
 function startGame() {
     setInterval(function() {
         socket.emit('key_states', key_states);
     }, 1000 / 60);
 
-    var blocks = new Array();
-
     backgroundLayer = new Image();
     backgroundLayer.src =  "/public/res/background.png";
     
     buildingTiles = new Image();
-    buildingTiles.src = "public/res/building_tiles.png";
+    buildingTilesLeft = new Image();
+    buildingTilesRight = new Image();
+    platformTile = new Image();
+    leftPlatformTile = new Image();
+    rightPlatformTile = new Image();
 
-    buildingTiles.onload = function () {
-        ctx.drawImage(buildingTiles,0,0);
-        //var blocks = ["absolutely nothing",, ]; // 0 for nothing, 1 for a window, 2 for a brick
-        blocks.push("absolutely nothing");
-        blocks.push(ctx.getImageData(0,0,32,32));
-        blocks.push(ctx.getImageData(32,0,32,32));
-    }
+    buildingTiles.onload = assetsInc;
+    buildingTilesLeft.onload = assetsInc;
+    buildingTilesRight.onload = assetsInc;
+    buildingTilesRight.onload = assetsInc;
+    platformTile.onload = assetsInc;
+    leftPlatformTile.onload = assetsInc;
+    rightPlatformTile.onload = assetsInc;
+
+    buildingTiles.src = "public/res/bsan.png";
+    buildingTilesLeft.src = "public/res/nlsa.png";
+    buildingTilesRight.src = "public/res/nrsa.png";
+    platformTile.src = "public/res/pn.jpg";
+    leftPlatformTile.src = "public/res/pln.png";
+    rightPlatformTile.src = "public/res/prno.png";
 
     socket.on('update', function(data) {
         players = data.players;
@@ -218,6 +266,7 @@ function startGame() {
     phoneSprite.src = '/public/res/phone.png';
 
     setInterval(function() {
+        if(assets < 6) return;
         dish.update();
         frame++;
         frame %= 32;

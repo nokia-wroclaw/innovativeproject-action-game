@@ -26,7 +26,7 @@ class Room {
             5,
             6
         );
-        this.dish = new dish.Dish((this.map[0].length-2)*scale, 160, 45, this.map);
+        this.dish = new dish.Dish((this.map[0].length-2)*scale, 32, 45, this.map);
         this.gravityForce = new engine.Vector(0, 0.3);
     }
 
@@ -155,10 +155,10 @@ class Room {
         }
 
 
-        matrix = this.only_ones(matrix);
-        for (let i = 0; i < total_height; i ++){
-            console.log(matrix[i]);
-        }
+        //matrix = this.only_ones(matrix);
+        // for (let i = 0; i < total_height; i ++){
+        //     console.log(matrix[i]);
+        // }
         return matrix;
     }
     /*/
@@ -221,10 +221,7 @@ class Room {
                 player.inAir = true;
             } else {
                 player.physicsObj.pos.y = (y - 1) * scale;
-                if(block[room.map[y][x_l]])
-                    player.physicsObj.bounce(block[room.map[y][x_l]].ref);
-                else
-                    player.physicsObj.bounce(block[room.map[y][x_r]].ref);
+                player.physicsObj.bounce(0);
                 
                 player.inAir = false;
             }
