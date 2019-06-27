@@ -145,10 +145,10 @@ class Room {
             for (let i = 0; i < total_height; i ++){
                 if (matrix[i][j] == 1){
                     if (j == 0 || this.is_wall(matrix[i][j - 1]))
-                        what = 6;
+                        what = rnd(4, 9);
                     else if (j == total_width - 1 || this.is_wall( matrix[i][j + 1]))
-                        what = 7;
-                    else what = 8;
+                        what = rnd(10, 15);
+                    else what = rnd(16, 21);
                 }
                 else matrix[i][j] = what;
             }
@@ -156,9 +156,9 @@ class Room {
 
 
         //matrix = this.only_ones(matrix);
-        // for (let i = 0; i < total_height; i ++){
-        //     console.log(matrix[i]);
-        // }
+        for (let i = 0; i < total_height; i ++){
+            console.log(matrix[i]);
+        }
         return matrix;
     }
     /*/

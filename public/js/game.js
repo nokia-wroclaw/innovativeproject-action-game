@@ -279,8 +279,8 @@ function startGame() {
 
         //TODO: make backgroundLayer move with camera, but slower
         ctx.drawImage(backgroundLayer,0, 0);
-        let from = Math.max(Math.floor(me.y / 32) - 11, 0);
-        let to = Math.min(mapTown.length, Math.floor(me.y / 32) + 11);
+        let from = Math.max(Math.floor(me.y / 32) - 20, 0);
+        let to = Math.min(mapTown.length, Math.floor(me.y / 32) + 9);
 
         for (let i = from; i < to ; i++){
             for (let j = 0 ; j < mapTown[i].length; j++) {
@@ -293,14 +293,14 @@ function startGame() {
                 }
             }
         }
-        ////DEBUG
+        // //DEBUG
         // for(let i = 1 ; i < 10 ; i ++){
         //     ctx.putImageData(blocks[i],(i-1)*32,0);
         // }
         //
         // for(let i = 11 ; i < blocks.length ; i ++){
         //     ctx.putImageData(blocks[i],(i-11)*32,32);
-        //}
+        // }
 
 
         // SIGNAL DISH
