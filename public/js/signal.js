@@ -1,10 +1,18 @@
 class Ray {
+
     constructor(x1, y1, x2, y2, dist) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
-        this.dist = dist;
+    }
+
+    dist(){
+
+        return Math.sqrt(
+            (this.x1 - this.x2) * (this.x1 - this.x2) +
+            (this.y1 - this.y2) * (this.y1 - this.y2)
+        )
     }
 }
 
@@ -20,7 +28,7 @@ class Signal {
 
         this.rays = [];
 
-        this.convertMap();
+        //this.convertMap();
         this.update();
     }
 
@@ -32,57 +40,90 @@ class Signal {
     }
 
     update() {
+
+        // UWAGA, RADAR MOŻE BYC TYLKO W PRAWYM GÓRNYM ROGU
         this.rays.length = 0;
         for(let i = 0; i < this.angle * 2; i++) {
+
             let currAngle = ((this.offset + i*0.5)%361) * (Math.PI/180);
 
-            const x3 = this.x;
-            const y3 = this.y;
-            const x4 = this.x + Math.cos(currAngle) * this.range;
-            const y4 = this.y + Math.sin(currAngle) * this.range;
+            const x3 = Math.floor(this.x);
+            const y3 = Math.floor(this.y);
+            const x4 = Math.floor(this.x + Math.cos(currAngle) * this.range);
+            const y4 = Math.floor(this.y + Math.sin(currAngle) * this.range);
 
-            let ray = { x: x4, y: y4, dist: this.range };
+            let curr = {x: x3 - 16, y: y3 + 16};
+            let b = true;
+        //    alert("od nowa..");
 
-            this.map.forEach(wall => {
-                const x1 = wall.x1;
-                const y1 = wall.y1;
-                const x2 = wall.x2;
-                const y2 = wall.y2;
+            while (b){
 
-                const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-                if(den != 0) {
-                    const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
-                    const u = - ((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+          //      alert(curr.x);
+              //     alert(curr.y);
 
-                    if(t > 0 && t < 1 && u > 0) {
-                        const new_x = x1 + t * (x2 - x1);
-                        const new_y = y1 + t * (y2 - y1);
+                let dirs = [-1, 0, 0, 1];
+                for (let i = 0; i < 4 && b; i += 2) {
 
-                        const dist = Math.sqrt((this.x - new_x) * (this.x - new_x) + (this.y - new_y) * (this.y - new_y));
-                        if(ray.dist > dist) {
-                            ray.x = new_x;
-                            ray.y = new_y;
-                            ray.dist = dist;
+                    let new_point = {x: curr.x + dirs[i] * 32, y: curr.y + dirs[i + 1] * 32};
+                    let mid_point = {x: curr.x + dirs[i] * 16, y: curr.y + dirs[i + 1] * 16};
+                    let x1, x2, y1, y2;
+
+                    if (!dirs[i + 1]) {
+                   //     alert("zrobilem ifa");
+                        y1 = mid_point.y - 16;
+                        y2 = mid_point.y + 16;
+                        x1 = mid_point.x;
+                        x2 = mid_point.x;
+                    }
+                    else {
+                        y1 = mid_point.y;
+                        y2 = mid_point.y;
+                        x1 = mid_point.x - 16;
+                        x2 = mid_point.x + 16;
+                    }
+/*/
+                    alert("superalert");
+                    alert(x1); alert(y1);
+                    alert(x2); alert(y2);
+                    alert(x3); alert(y3);
+                    alert(x4); alert(y4);
+  /*/
+                    let den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+                    if (den != 0) {
+                        let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+                        let u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+                        if (t > 0 && t < 1 && u > 0) {
+                            let new_x = x1 + t * (x2 - x1);
+                            let new_y = y1 + t * (y2 - y1);
+
+                            if (this.map[Math.floor(new_point.y / 32)][Math.floor(new_point.x / 32)] == 0 ||
+                                this.map[Math.floor(new_point.y / 32)][Math.floor(new_point.x / 32)] >= 4){
+                                curr = new_point;
+                            }
+                            else{
+                                curr.x = Math.floor(new_x);
+                                curr.y = Math.floor(new_y);
+                                b = false;
+                            }
                         }
                     }
+                    else{
+                        // alert("wtedy jest lipa");
+                        b = true;
+                    }
                 }
-            });
-
-            this.rays.push(new Ray(this.x, this.y, ray.x, ray.y, ray.dist));
-        }
-    }
-
-    convertMap() {
-        let map = this.map;
-        this.map = [];
-        for (var y = 0; y < map.length ; y++){
-            for (var x = 0 ; x < map[y].length; x++) {
-                if(map[y][x] == 0) continue;
-                this.map.push({ x1: x * scale, y1: y * scale, x2: (x + 1) * scale, y2: y * scale });
-                this.map.push({ x1: x * scale, y1: (y + 1) * scale, x2: (x + 1) * scale, y2: (y + 1) * scale });
-                this.map.push({ x1: x * scale, y1: y * scale, x2: x * scale, y2: (y + 1) * scale });
-                this.map.push({ x1: (x + 1) * scale, y1: y * scale, x2: (x + 1) * scale, y2: (y + 1) * scale });
             }
+
+            if (b){
+                curr.x = x4;
+                curr.y = y4;
+            }
+            alert(curr.x); alert(curr.y);
+            this.rays.push(new Ray(this.x, this.y, curr.x, curr.y));
+
         }
+     //   alert("skonczylem");
     }
+
+
 }
