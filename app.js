@@ -9,7 +9,6 @@ var io = socketIO(server);
 
 var Player = require('./server/player.js');
 var Room = require('./server/room.js');
-var Mast = require('./server/Mast');
 app.set('port', 5000);
 
 app.use(express.static(__dirname + '/public'));
@@ -28,9 +27,29 @@ server.listen(5000, function() {
 var rooms = [];
 var currID = 0;
 
+function hash(code) {
+    let res = 0;
+    let ans = "";
+    const key = 307;
+    const mod = 1000000009;
+
+    for (let i = 0; i < code.length; i ++){
+        res *= key;
+        res += code.charCodeAt(i);
+        res %= mod;
+    }
+    for (let i = 0; i < 6; i ++){
+        ans += String.fromCharCode(res % (122 - 97) + 97);
+        res /= key;
+    }
+    
+    return ans;
+}
+
+
 io.on('connection', function(socket) {
     socket.on('new_room', function() {
-        var room = new Room(2, "x3W1oc" + currID);
+        var room = new Room(2, hash("room" + currID));
         currID++;
         room.join(new Player(socket.id, 300, 300));
         rooms.push(room);
