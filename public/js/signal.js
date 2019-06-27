@@ -42,31 +42,31 @@ class Signal {
             const y4 = this.y + Math.sin(currAngle) * this.range;
 
             let ray = { x: x4, y: y4, dist: this.range };
-
-            this.map.forEach(wall => {
-                const x1 = wall.x1;
-                const y1 = wall.y1;
-                const x2 = wall.x2;
-                const y2 = wall.y2;
-
-                const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-                if(den != 0) {
-                    const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
-                    const u = - ((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
-
-                    if(t > 0 && t < 1 && u > 0) {
-                        const new_x = x1 + t * (x2 - x1);
-                        const new_y = y1 + t * (y2 - y1);
-
-                        const dist = Math.sqrt((this.x - new_x) * (this.x - new_x) + (this.y - new_y) * (this.y - new_y));
-                        if(ray.dist > dist) {
-                            ray.x = new_x;
-                            ray.y = new_y;
-                            ray.dist = dist;
-                        }
-                    }
-                }
-            });
+            //
+            // this.map.forEach(wall => {
+            //     const x1 = wall.x1;
+            //     const y1 = wall.y1;
+            //     const x2 = wall.x2;
+            //     const y2 = wall.y2;
+            //
+            //     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+            //     if(den != 0) {
+            //         const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+            //         const u = - ((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+            //
+            //         if(t > 0 && t < 1 && u > 0) {
+            //             const new_x = x1 + t * (x2 - x1);
+            //             const new_y = y1 + t * (y2 - y1);
+            //
+            //             const dist = Math.sqrt((this.x - new_x) * (this.x - new_x) + (this.y - new_y) * (this.y - new_y));
+            //             if(ray.dist > dist) {
+            //                 ray.x = new_x;
+            //                 ray.y = new_y;
+            //                 ray.dist = dist;
+            //             }
+            //         }
+            //     }
+            // });
 
             this.rays.push(new Ray(this.x, this.y, ray.x, ray.y, ray.dist));
         }

@@ -23,7 +23,7 @@ class Room {
             100,
             20,
             5,
-            5,
+            1,
             6
         );
         this.dish = new dish.Dish((this.map[0].length-2)*scale, 160, 45, this.map);
@@ -139,23 +139,32 @@ class Room {
 
         for (let i = 0; i < total_width; i ++)
             matrix[0][i] = 1;
+
+
+        // 0 -> null
+        // 1 -> platforma
+        // 2, 3 -> lewa i prawa platforma
+        // 4 - 9 -> lewa sciana
+        // 10 - 15 -> prawa sciana
+        // 16 - 21 -> sciany
+
         matrix.reverse();
         for (let j = 0; j < total_width; j ++){
             let what = 0; // 0 - nothing, 6 - left, 7 - right, 8 - middle
             for (let i = 0; i < total_height; i ++){
                 if (matrix[i][j] == 1){
                     if (j == 0 || this.is_wall(matrix[i][j - 1]))
-                        what = 6;
+                        what = rnd(4, 9);
                     else if (j == total_width - 1 || this.is_wall( matrix[i][j + 1]))
-                        what = 7;
-                    else what = 8;
+                        what = rnd(10, 15);
+                    else what = rnd(16, 21);
                 }
                 else matrix[i][j] = what;
             }
         }
 
 
-        matrix = this.only_ones(matrix);
+        //matrix = this.only_ones(matrix);
         for (let i = 0; i < total_height; i ++){
             console.log(matrix[i]);
         }
@@ -219,12 +228,13 @@ class Room {
             if(room.map[y][x_l] == 0 && room.map[y][x_r] == 0) {
                 player.physicsObj.applyForce(room.gravityForce);
                 player.inAir = true;
-            } else {
-                player.physicsObj.pos.y = (y - 1) * scale;
+            } else
+                if(player.physicsObj.vel.y > 0){
+                    player.physicsObj.pos.y = (y - 1) * scale;
                 if(block[room.map[y][x_l]])
-                    player.physicsObj.bounce(block[room.map[y][x_l]].ref);
+                    player.physicsObj.bounce(0);//block[room.map[y][x_l]].ref);
                 else
-                    player.physicsObj.bounce(block[room.map[y][x_r]].ref);
+                    player.physicsObj.bounce(0);//block[room.map[y][x_r]].ref);
                 
                 player.inAir = false;
             }
