@@ -241,7 +241,7 @@ function startGame() {
     buildingTiles.src = "public/res/bsan.png";
     buildingTilesLeft.src = "public/res/nlsa.png";
     buildingTilesRight.src = "public/res/nrsa.png";
-    platformTile.src = "public/res/pn.png";
+    platformTile.src = "public/res/pn.jpg";
     leftPlatformTile.src = "public/res/pln.png";
     rightPlatformTile.src = "public/res/prno.png";
 
@@ -260,6 +260,12 @@ function startGame() {
     phoneSprite.src = '/public/res/phone.png';
 
     setInterval(function() {
+
+
+// Do your operations
+
+
+        console.log("siemka");
         if(assets < 6) return;
         dish.update();
         frame++;
@@ -273,7 +279,12 @@ function startGame() {
 
         //TODO: make backgroundLayer move with camera, but slower
         ctx.drawImage(backgroundLayer,0, 0);
-        for (let i = 0; i < mapTown.length ; i++){
+
+        var startDate = new Date();
+        let from = Math.max(Math.floor(me.y / 32) - 11, 0);
+        let to = Math.min(mapTown.length, Math.floor(me.y / 32) + 11);
+
+        for (let i = from; i < to ; i++){
             for (let j = 0 ; j < mapTown[i].length; j++) {
                 if(mapTown[i][j] == 0) continue;
                 try {
@@ -285,6 +296,9 @@ function startGame() {
             }
         }
 
+        var endDate   = new Date();
+        var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        console.log(seconds);
         // SIGNAL DISH
         ctx.drawImage(dishSprite, dish.x - 5, dish.y - yOffset - 29);
         ctx.strokeStyle = "#AAAA3344";
@@ -320,8 +334,10 @@ function startGame() {
             ctx.fillStyle = "#4444FF";
             ctx.fillRect(15, 15, 15, 15);
         }
+
     }, 1000/60);
 
     canv.classList.remove('blocked');
     canv.classList.add('fadeIn');
+
 }

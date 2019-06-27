@@ -111,7 +111,7 @@ class Room {
 
         for (let i = 0; i < A.length; i ++)
             for (let j = 0; j < A[i].length; j ++)
-                A[i][j] = (A[i][j] == 1 ? 1 : 0);
+                A[i][j] = (A[i][j] == 1 ? 0 : 1);
         return A;
     }
 
@@ -163,8 +163,18 @@ class Room {
             }
         }
 
+        for (let i = 0; i < total_height - 1; i ++)
+            for (let j = 0; j < total_width; j ++)
+                if (matrix[i][j] == 1){
+                    if (j === 0 || (matrix[i][j - 1] !== 1 && matrix[i][j - 1] !== 2)){
+                        matrix[i][j] = 2;
+                    }
+                    if (j === total_width - 1 || matrix[i][j + 1] !== 1){
+                        matrix[i][j] = 3;
+                    }
+                }
 
-        //matrix = this.only_ones(matrix);
+          matrix = this.only_ones(matrix);
         for (let i = 0; i < total_height; i ++){
             console.log(matrix[i]);
         }
@@ -225,7 +235,9 @@ class Room {
             x_r = (x_r < 0) ? 0 : x_r;
             y = (y < 0) ? 0 : y;
 
-            if(room.map[y][x_l] == 0 && room.map[y][x_r] == 0) {
+            if((room.map[y][x_l] != 1 && room.map[y][x_r] != 1)
+            && (room.map[y][x_l] != 2 && room.map[y][x_r] != 2)
+            && (room.map[y][x_l] != 3 && room.map[y][x_r] != 3  )) {
                 player.physicsObj.applyForce(room.gravityForce);
                 player.inAir = true;
             } else
