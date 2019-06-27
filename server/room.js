@@ -154,7 +154,16 @@ class Room {
             }
         }
 
-
+        for (let i = 0; i < total_height - 1; i ++)
+            for (let j = 0; j < total_width; j ++)
+                if (matrix[i][j] == 1){
+                    if (j === 0 || (matrix[i][j - 1] !== 1 && matrix[i][j - 1] !== 2)){
+                        matrix[i][j] = 2;
+                    }
+                    if (j === total_width - 1 || matrix[i][j + 1] !== 1){
+                        matrix[i][j] = 3;
+                    }
+                }
         matrix = this.only_ones(matrix);
         for (let i = 0; i < total_height; i ++){
             console.log(matrix[i]);
