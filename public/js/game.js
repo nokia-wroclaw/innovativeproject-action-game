@@ -216,7 +216,7 @@ function loadBlock(img) {
     ctx.drawImage(img, 0, 0);
     for(let i = 0 ; i < img.width ; i += 32){
         for(let j = 0 ; j < img.height; j += 32 ){
-            blocks.push(ctx.getImageData(j,i,32,32));
+            blocks.push(ctx.getImageData(i,j,32,32));
         }
     }
 }
@@ -279,12 +279,29 @@ function startGame() {
 
         //TODO: make backgroundLayer move with camera, but slower
         ctx.drawImage(backgroundLayer,0, 0);
-        for (let i = 0; i < mapTown.length ; i++){
+        let from = Math.max(Math.floor(me.y / 32) - 11, 0);
+        let to = Math.min(mapTown.length, Math.floor(me.y / 32) + 11);
+
+        for (let i = from; i < to ; i++){
             for (let j = 0 ; j < mapTown[i].length; j++) {
                 if(mapTown[i][j] == 0) continue;
-                ctx.putImageData(blocks[mapTown[i][j]], j * scale, (i * scale) - yOffset);
+                try {
+                    ctx.putImageData(blocks[mapTown[i][j]], j * scale, (i * scale) - yOffset);
+                }
+                catch(err){
+                    console.log(mapTown[i][j] + " doesnt exists!")
+                }
             }
         }
+        ////DEBUG
+        // for(let i = 1 ; i < 10 ; i ++){
+        //     ctx.putImageData(blocks[i],(i-1)*32,0);
+        // }
+        //
+        // for(let i = 11 ; i < blocks.length ; i ++){
+        //     ctx.putImageData(blocks[i],(i-11)*32,32);
+        //}
+
 
         // SIGNAL DISH
         ctx.drawImage(dishSprite, dish.x - 5, dish.y - yOffset - 29);
@@ -307,7 +324,7 @@ function startGame() {
                 64,
                 64,
                 player.x - 16,
-                player.y - 29 - yOffset,
+                player.y - 29 - yOffset + 16,
                 64,
                 64);
             if(player.phone) {

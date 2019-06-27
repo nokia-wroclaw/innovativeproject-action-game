@@ -216,13 +216,19 @@ class Room {
             x_r = (x_r < 0) ? 0 : x_r;
             y = (y < 0) ? 0 : y;
 
-            if(room.map[y][x_l] == 0 && room.map[y][x_r] == 0) {
+            if((room.map[y][x_l] != 1 && room.map[y][x_r] != 1)
+                && (room.map[y][x_l] != 2 && room.map[y][x_r] != 2)
+                && (room.map[y][x_l] != 3 && room.map[y][x_r] != 3  )) {
                 player.physicsObj.applyForce(room.gravityForce);
                 player.inAir = true;
-            } else {
+            } else
+            if(player.physicsObj.vel.y > 0){
                 player.physicsObj.pos.y = (y - 1) * scale;
-                player.physicsObj.bounce(0);
-                
+                if(block[room.map[y][x_l]])
+                    player.physicsObj.bounce(0);//block[room.map[y][x_l]].ref);
+                else
+                    player.physicsObj.bounce(0);//block[room.map[y][x_r]].ref);
+
                 player.inAir = false;
             }
 
